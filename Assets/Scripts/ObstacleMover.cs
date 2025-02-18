@@ -13,6 +13,11 @@ public class ObstacleMover : MonoBehaviour
     {
 
         transform.position += Vector3.left * speed * Time.deltaTime;
+
+        if (transform.position.x < -20f)
+        {
+            Destroy(gameObject);
+        }
         
     }
 }
