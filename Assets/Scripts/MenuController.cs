@@ -10,10 +10,34 @@ public class MenuController : MonoBehaviour
     public GameObject creditsPanel;
     public GameObject howToPlayPanel;
     public GameObject pip;
+    public GameObject levelsPanel;
 
-    public void StartGame()
+    public void StartLevel(int levelNumber)
     {
-        SceneManager.LoadScene("Levels");
+        PlayerPrefs.SetInt("CurrentLevel", levelNumber);
+        PlayerPrefs.Save();
+        SceneManager.LoadScene("Levels"); // Reload the same scene
+    }
+
+    public void ShowLevel()
+    {
+        startButton.SetActive(false);
+        titleCard.SetActive(false);
+        creditsButton.SetActive(false);
+        howButton.SetActive(false);
+        pip.SetActive(false);
+        levelsPanel.SetActive(true);
+    }
+
+
+    public void HideLevel()
+    {
+        startButton.SetActive(true);
+        titleCard.SetActive(true);
+        creditsButton.SetActive(true);
+        howButton.SetActive(true);
+        pip.SetActive(true);
+        levelsPanel.SetActive(false);
     }
 
     public void ShowCredits()
