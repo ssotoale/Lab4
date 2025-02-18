@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -28,6 +29,11 @@ public class PlayerController : MonoBehaviour
         {
             rb.linearVelocity += Vector2.down * fastFallMultiplier * Time.deltaTime;
         }
+        if (Input.GetKey(KeyCode.R))
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            Time.timeScale = 1;
+        }
     }
 
     void OnCollisionEnter2D(Collision2D collision)
@@ -45,6 +51,11 @@ public class PlayerController : MonoBehaviour
         {
             coinCount += 1;
             coinText.text = "Coins: " + coinCount;
+        }
+
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+             Time.timeScale = 0;
         }
     }
 

@@ -32,7 +32,7 @@ public class Spawner : MonoBehaviour
         {
             if (spawnChance < obj.spawnChance)
             {
-                GameObject obstacle = Instantiate(obj.prefab, transform.position, Quaternion.identity);
+                GameObject obstacle = Instantiate(obj.prefab, new Vector3(transform.position.x, Random.Range(transform.position.y-3.0f, transform.position.y), transform.position.z), Quaternion.identity);
                 break;
             }
 
