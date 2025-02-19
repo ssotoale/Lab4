@@ -1933,7 +1933,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: ee8b71e74b5587940b006a4859304481, type: 3}
+  m_Sprite: {fileID: -3838241492584662357, guid: b62d94b75ebcb9d4a92ee4675c1e0e3c, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2297,17 +2297,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0576c2ac9ffd894f9de0aa8d54bd408, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jumpForce: 7
-  fastFallMultiplier: 5
+  jumpForce: 10
+  fastFallMultiplier: 10
   coinText: {fileID: 1821833329}
   distanceText: {fileID: 1497275137}
   winScreen: {fileID: 1170863955}
   loseScreen: {fileID: 1742000384}
   restartText: {fileID: 649951919}
+  explosion: {fileID: 7811142649474335510, guid: bba3e802fe458114884bedfaae802420, type: 3}
   audioSource: {fileID: 1756315031}
   jumpSound: {fileID: 8300000, guid: 447d8136b9b2c0f4ca9cffb8f6d5a692, type: 3}
   squishSound: {fileID: 8300000, guid: 36cad8352600bda4698e7e27c1aabbed, type: 3}
   coinSound: {fileID: 8300000, guid: 7d6b81cdb4c02c14c9d8b55ae4af6c2c, type: 3}
+  boomSound: {fileID: 8300000, guid: a1b4d5a9572de9e4f8fc9e5434254a05, type: 3}
 --- !u!95 &1756315029
 Animator:
   serializedVersion: 7

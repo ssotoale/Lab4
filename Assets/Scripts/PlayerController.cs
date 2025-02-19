@@ -1,4 +1,6 @@
 using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine.SceneManagement;
 
@@ -23,10 +25,12 @@ public class PlayerController : MonoBehaviour
     public GameObject loseScreen;
     public GameObject restartText;
     private int currentLevel = 0;
+    public GameObject explosion;
     public AudioSource audioSource;  
     public AudioClip jumpSound; 
     public AudioClip squishSound;
     public AudioClip coinSound;
+    public AudioClip boomSound;
 
     void Start()
     {
@@ -197,8 +201,17 @@ public class PlayerController : MonoBehaviour
 
         if (collision.gameObject.CompareTag("Enemy"))
         {
+            audioSource.PlayOneShot(boomSound);
+            GameObject obstacle = Instantiate(explosion, new Vector3(transform.position.x, transform.position.y - 0.5f, transform.position.z), Quaternion.identity);
             restartText.SetActive(true);
-            Time.timeScale = 0;
+            StartCoroutine(DelayedGameStop());
         }
+    }
+
+    // Coroutine to delay stopping the game
+    IEnumerator DelayedGameStop()
+    {
+        yield return new WaitForSeconds(0.5f); // Adjust based on explosion animation length
+        Time.timeScale = 0; // Stop the game AFTER animation plays
     }
 }
