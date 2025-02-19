@@ -11,19 +11,105 @@ public class PlayerController : MonoBehaviour
     private bool isGrounded;
     private int coinCount = 0;
     public TMP_Text coinText;
-    private bool canFastFall = true; // Prevents instant fast fall after jumping
+    private bool canFastFall = true; 
+    private Vector3 originalScale; 
+    private bool isSquishing = false; 
+    private float distanceTraveled = 0f;
+    public TMP_Text distanceText;
+    private float backgroundSpeed = 0.4f;
+    private int distanceGoal = 0;
+    private int coinGoal = 0;
+    public GameObject winScreen;
+    public GameObject loseScreen;
+    public GameObject restartText;
+    private int currentLevel = 0;
+    public AudioSource audioSource;  
+    public AudioClip jumpSound; 
+    public AudioClip squishSound;
+    public AudioClip coinSound;
 
     void Start()
     {
+        Time.timeScale = 1;
         rb = GetComponent<Rigidbody2D>();
+        audioSource = GetComponent<AudioSource>();
         animator = GetComponent<Animator>();
+        originalScale = transform.localScale; // Save the original scale of the player
+        currentLevel = PlayerPrefs.GetInt("CurrentLevel", 1); // Default to level 1
+        AdjustSpeedMultiplier(currentLevel);
+    }
+
+    void AdjustSpeedMultiplier(int level)
+    {
+        if (level == 1)
+        {
+            backgroundSpeed = 0.4f;
+            distanceGoal = 200;
+            coinGoal = 15;
+
+        }
+        else if (level == 2)
+        {
+            backgroundSpeed = 0.7f;
+            distanceGoal = 300;
+            coinGoal = 25;
+        }
+        else if (level == 3)
+        {
+            backgroundSpeed = 1f;
+            distanceGoal = 500;
+            coinGoal = 35;
+        }
+        else
+        {
+            backgroundSpeed = 1.4f;
+            distanceGoal = 1000;
+            coinGoal = 100;
+        }
     }
 
     void Update()
     {
+
+        distanceTraveled += backgroundSpeed * Time.deltaTime * 10f; // Multiply by 10 for better scaling
+        distanceText.text = "Distance: " + Mathf.FloorToInt(distanceTraveled) + "m"; 
+
+        if (distanceTraveled > distanceGoal)
+        {
+            if (coinCount > coinGoal)
+            {
+                winScreen.SetActive(true); 
+                int highest = PlayerPrefs.GetInt("UnlockedLevel", 1);
+                if (highest == currentLevel)
+                {
+                    PlayerPrefs.SetInt("UnlockedLevel", currentLevel + 1);
+                    PlayerPrefs.Save();
+                }
+            }
+            else
+            {
+                loseScreen.SetActive(true);
+            }
+            Time.timeScale = 0;
+        }
+
+        // Squish the player when S is held down and grounded
+        if (Input.GetKey(KeyCode.S) && isGrounded && !isSquishing)
+        {
+            audioSource.PlayOneShot(squishSound);
+            transform.localScale = new Vector3(originalScale.x, originalScale.y * 0.5f, originalScale.z); 
+            isSquishing = true; // Prevent repeated scaling
+        }
+        else if (!Input.GetKey(KeyCode.S) && isSquishing)
+        {
+            transform.localScale = originalScale; // Restore normal size
+            isSquishing = false;
+        }
+
         // Jumping
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
+            audioSource.PlayOneShot(jumpSound);
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
             animator.SetTrigger("Jump"); 
             isGrounded = false;
@@ -31,7 +117,6 @@ public class PlayerController : MonoBehaviour
             Invoke("EnableFastFall", 0.2f); // Re-enable fast fall after 0.2 seconds
         }
 
-        // Fast fall when pressing S or Down Arrow
         if ((Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow)) && !isGrounded && canFastFall)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, -fastFallMultiplier); 
@@ -42,6 +127,11 @@ public class PlayerController : MonoBehaviour
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
             Time.timeScale = 1;
+        }
+
+        if (Input.GetKey(KeyCode.Escape))
+        {
+            SceneManager.LoadScene("Main Menu");
         }
 
         // Set Falling Animation
@@ -82,13 +172,32 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Coins"))
         {
-            coinCount += 1;
+            string coinName = collision.gameObject.name;
+            audioSource.PlayOneShot(coinSound);
+            Debug.Log(coinName);
+            if (coinName == "Yerb(Clone)")
+            {
+                coinCount += 1; 
+            }
+            else if (coinName == "Taco(Clone)")
+            {
+                coinCount += 2;
+            }
+            else if (coinName == "Donut(Clone)")
+            {
+                coinCount += 3;
+            }
+            else 
+            {
+                coinCount += 5;
+            }
             coinText.text = "Coins: " + coinCount;
             Debug.Log("Touching Coin");
         }
 
         if (collision.gameObject.CompareTag("Enemy"))
         {
+            restartText.SetActive(true);
             Time.timeScale = 0;
         }
     }

@@ -6,6 +6,28 @@ public class ObstacleMover : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        int currentLevel = PlayerPrefs.GetInt("CurrentLevel", 1);
+        AdjustSpeedMultiplier(currentLevel);
+    }
+
+    void AdjustSpeedMultiplier(int level)
+    {
+        if (level == 1)
+        {
+            speed = 7f;
+        }
+        else if (level == 2)
+        {
+            speed = 10f;
+        }
+        else if (level == 3)
+        {
+            speed = 16f;
+        }
+        else
+        {
+            speed = 18f;
+        }
     }
 
     // Update is called once per frame
